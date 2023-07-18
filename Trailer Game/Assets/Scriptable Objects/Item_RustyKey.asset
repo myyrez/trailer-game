@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e53090ddd492d99458fbfb3bee89f2a0, type: 3}
-  m_Name: Item_Gun
+  m_Name: Item_RustyKey
   m_EditorClassIdentifier: 
-  id: 2
-  itemName: HANDGUN
+  id: 3
+  itemName: RUSTY KEY
   description:
-  - common handgun.
-  - it can kill stuff i guess.
-  sprite: {fileID: 8330937776823527466, guid: dbda9eb92f068a7409a56579cd903161, type: 3}
+  - A tarnished key.
+  sprite: {fileID: 4760339037887937586, guid: 5152abdd1deaa8740ad70925a0d89edf, type: 3}

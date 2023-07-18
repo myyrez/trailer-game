@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool canMove = true;
+
     private ImputManager input = null;
     private Camera mainCamera;
     private Rigidbody rb;
@@ -15,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveVector = Vector2.zero;
     private Vector2 mouseLook = Vector2.zero;
     private Vector3 rotationTarget;
+
     [SerializeField] private LayerMask groundMask;
 
     private void Awake()
@@ -32,6 +35,9 @@ public class PlayerController : MonoBehaviour
         input.Enable();
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCancel;
+
+        EventBus.Instance.onGameplayPaused += () => canMove = false;
+        EventBus.Instance.onGameplayResumed += () => canMove = true;
     }
 
     private void OnDisable()
@@ -39,6 +45,9 @@ public class PlayerController : MonoBehaviour
         input.Disable();
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCancel;
+
+        EventBus.Instance.onGameplayPaused -= () => canMove = false;
+        EventBus.Instance.onGameplayResumed -= () => canMove = true;
     }
 
     private void OnMove(InputAction.CallbackContext value)
@@ -69,6 +78,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!canMove) return;
         movePlayer();
         Aim();
     }

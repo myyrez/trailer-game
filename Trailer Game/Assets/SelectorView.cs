@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 public class SelectorView : MonoBehaviour
 {
     private RectTransform rectTransform;
+
+    private GameObject selected;
+
     [SerializeField] private float speed = 25f;
 
     private void Awake()
@@ -15,7 +18,11 @@ public class SelectorView : MonoBehaviour
 
     private void Update()
     {
-        var selected = EventSystem.current.currentSelectedGameObject;
+        var selectedGameObject = EventSystem.current.currentSelectedGameObject;
+
+        selected = (selectedGameObject == null) ? selected : selectedGameObject;
+
+        EventSystem.current.SetSelectedGameObject(selected);
 
         if (selected == null) return;
 
