@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53090ddd492d99458fbfb3bee89f2a0, type: 3}
+  m_Name: Item_RustyKey
+  m_EditorClassIdentifier: 
+  uniqueId: rustyKey
+  itemName: RUSTY KEY
+  description:
+  - A tarnished key.
+  sprite: {fileID: 4760339037887937586, guid: 5152abdd1deaa8740ad70925a0d89edf, type: 3}
+  itemClass: 3

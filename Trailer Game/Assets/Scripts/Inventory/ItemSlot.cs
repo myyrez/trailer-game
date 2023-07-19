@@ -17,6 +17,7 @@ public class ItemSlot : MonoBehaviour, ISelectHandler
         _viewController.OnSlotSelected(this);
     }
 
+    // return null to check if it's true
     public bool IsEmpty()
     {
         return itemData == null;
