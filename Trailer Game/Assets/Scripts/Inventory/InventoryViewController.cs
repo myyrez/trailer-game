@@ -24,8 +24,8 @@ public class InventoryViewController : MonoBehaviour
         _currentSelectedSlot = selectedSlot;
         if (selectedSlot.itemData == null)
         {
-            _itemNameText.ClearMesh();
-            _itemDescriptionText.ClearMesh();
+            _itemNameText.SetText("");
+            _itemDescriptionText.SetText("");
 
             // loop to set all options false
             foreach (var option in _contextMenuOptions)
@@ -39,57 +39,40 @@ public class InventoryViewController : MonoBehaviour
         _itemNameText.SetText(selectedSlot.itemData.itemName);
         _itemDescriptionText.SetText(selectedSlot.itemData.description[0]);
 
-        if (selectedSlot.itemData.itemClass == Item.ItemClass.weapon) 
+        switch (selectedSlot.itemData.itemClass)
         {
-            // loops all options and set them active/inactive.
-            foreach (var option in _contextMenuOptions) option.SetActive(true);
+            case Item.ItemClass.weapon:
+                // loops all options and set them active/inactive.
+                foreach (var option in _contextMenuOptions) option.SetActive(true);
+                //set options you don't want to appear false/true.
+                _contextMenuOptions[2].SetActive(false);
+                _contextMenuOptions[5].SetActive(false);
+                break;
 
-            //set options you don't want to appear false/true.
-            _contextMenuOptions[2].SetActive(false);
-            _contextMenuOptions[5].SetActive(false);
-        }
+            case Item.ItemClass.secondaryEquipment:
+                foreach (var option in _contextMenuOptions) option.SetActive(false);
+                _contextMenuOptions[0].SetActive(true);
+                _contextMenuOptions[4].SetActive(true);
+                break;
 
-        if (selectedSlot.itemData.itemClass == Item.ItemClass.secondaryEquipment) 
-        {
-            foreach (var option in _contextMenuOptions) option.SetActive(false);
+            case Item.ItemClass.consumable:
+                foreach (var option in _contextMenuOptions) option.SetActive(true);
+                _contextMenuOptions[0].SetActive(false);
+                _contextMenuOptions[1].SetActive(false);
+                break;
 
-            _contextMenuOptions[0].SetActive(true);
-            _contextMenuOptions[4].SetActive(true);
-        }
+            case Item.ItemClass.key:
+                foreach (var option in _contextMenuOptions) option.SetActive(true);
+                _contextMenuOptions[0].SetActive(false);
+                _contextMenuOptions[1].SetActive(false);
+                _contextMenuOptions[5].SetActive(false);
+                break;
 
-        if (selectedSlot.itemData.itemClass == Item.ItemClass.key) 
-        {
-            foreach (var option in _contextMenuOptions) option.SetActive(true);
-
-            _contextMenuOptions[0].SetActive(false);
-            _contextMenuOptions[1].SetActive(false);
-            _contextMenuOptions[5].SetActive(false);
-        }
-
-        if (selectedSlot.itemData.itemClass == Item.ItemClass.ammo) 
-        {
-            foreach (var option in _contextMenuOptions) option.SetActive(true);
-
-            _contextMenuOptions[0].SetActive(false);
-            _contextMenuOptions[2].SetActive(false);
-        }
-
-        if (selectedSlot.itemData.itemClass == Item.ItemClass.consumable) 
-        {
-            foreach (var option in _contextMenuOptions) option.SetActive(true);
-
-            _contextMenuOptions[0].SetActive(false);
-            _contextMenuOptions[1].SetActive(false);
-        }
-
-        // checks the first active option so Selector can jump to it.
-        foreach (var option in _contextMenuOptions)
-        {
-            if (option.activeSelf)
-            {
-                _firstContextOption = option;
-                return;
-            }
+            case Item.ItemClass.ammo:
+                foreach (var option in _contextMenuOptions) option.SetActive(true);
+                _contextMenuOptions[0].SetActive(false);
+                _contextMenuOptions[2].SetActive(false);
+                break;
         }
     }
 
@@ -102,7 +85,10 @@ public class InventoryViewController : MonoBehaviour
 
     private State _state;
 
-    private void OnEnable() => EventBus.Instance.onPickUpItem += OnItemPickedUp;
+    private void OnEnable()
+    {
+        EventBus.Instance.onPickUpItem += OnItemPickedUp;
+    }
 
     private void OnDisable()
     {
@@ -111,6 +97,7 @@ public class InventoryViewController : MonoBehaviour
 
     private void Update()
     {
+        
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (_state == State.inventoryClosed)
@@ -141,7 +128,7 @@ public class InventoryViewController : MonoBehaviour
         }
 
         // open context menu
-        if (Input.GetKeyDown(KeyCode.E)) 
+        if (Input.GetKeyDown(KeyCode.E) && _currentSelectedSlot.itemData != null) 
         {
             if (_state == State.navigatingInventory)
             {
@@ -157,18 +144,68 @@ public class InventoryViewController : MonoBehaviour
                     }
                 }
             }
+        }
 
-            
+        // checks the first active option so Selector can jump to it.
+        foreach (var option in _contextMenuOptions)
+        {
+            if (option.activeSelf)
+            {
+                _firstContextOption = option;
+                return;
+            }
         }
     }
 
-    private void OnItemPickedUp(Item itemData)
+    public void OnItemPickedUp(Item itemData)
     {
         foreach (var slot in _slots)
         {
             if (slot.IsEmpty())
             {
                 slot.itemData = itemData;
+                if (slot == _currentSelectedSlot)
+                {
+                    // I need to repeat this code here because the context menu wouldn't update if you
+                    // dind't move the Selector. An item can appear inside the selector after picking it
+                    // up, therefore causing problems when selecting.
+                    switch (itemData.itemClass)
+                    {
+                        case Item.ItemClass.weapon:
+                            foreach (var option in _contextMenuOptions) option.SetActive(true);
+                            _contextMenuOptions[2].SetActive(false);
+                            _contextMenuOptions[5].SetActive(false);
+                            break;
+
+                        case Item.ItemClass.secondaryEquipment:
+                            foreach (var option in _contextMenuOptions) option.SetActive(false);
+                            _contextMenuOptions[0].SetActive(true);
+                            _contextMenuOptions[4].SetActive(true);
+                            break;
+
+                        case Item.ItemClass.consumable:
+                            foreach (var option in _contextMenuOptions) option.SetActive(true);
+                            _contextMenuOptions[0].SetActive(false);
+                            _contextMenuOptions[1].SetActive(false);
+                            break;
+
+                        case Item.ItemClass.key:
+                            foreach (var option in _contextMenuOptions) option.SetActive(true);
+                            _contextMenuOptions[0].SetActive(false);
+                            _contextMenuOptions[1].SetActive(false);
+                            _contextMenuOptions[5].SetActive(false);
+                            break;
+
+                        case Item.ItemClass.ammo:
+                            foreach (var option in _contextMenuOptions) option.SetActive(true);
+                            _contextMenuOptions[0].SetActive(false);
+                            _contextMenuOptions[2].SetActive(false);
+                            break;
+                    }
+
+                    _itemNameText.SetText(_currentSelectedSlot.itemData.itemName);
+                    _itemDescriptionText.SetText(_currentSelectedSlot.itemData.description[0]);
+                }
                 break;
             }
         }
